@@ -3,7 +3,7 @@
 > 一个简单好用的网页记账本，打开就能用，不用注册，不用安装。
 > A simple web-based expense tracker. Just open it and start recording — no sign-up, no installation.
 
-**在线打开 / Open online：** 暂未发布；目前请按下方「下载到电脑上用」打开 `index.html`。 / Not published yet; open `index.html` locally using the offline instructions below.
+**在线打开 / Open online：** [https://812822586-droid.github.io/lvbao-jizhang/](https://812822586-droid.github.io/lvbao-jizhang/)
 
 ---
 
