@@ -219,6 +219,9 @@ button { touch-action: manipulation; }
   margin-top: 8px;
 }
 
+/* is-empty is toggled in renderMonth for browsers that ignore :has(). */
+.month-extra.is-empty { display: none; }
+
 .month-extra:not(:has(button:not([hidden]))) { display: none; }
 
 .summary {
@@ -492,8 +495,10 @@ input[type="text"]:focus {
   font-weight: 800;
   font-size: 15px;
   cursor: pointer;
-  padding: 6px 2px;
-  min-height: 36px;
+  padding: 8px 2px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -672,8 +677,8 @@ input[type="text"]:focus {
 .badge-out { background: var(--expense-bg); color: var(--expense); }
 
 .mini-btn {
-  min-height: 40px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 8px 12px;
   border-radius: 10px;
   border: 2px solid var(--line);
   background: #fff;
@@ -867,7 +872,7 @@ dialog::backdrop { background: rgba(12, 40, 24, 0.45); }
         <button type="button" id="next-month" class="btn btn-secondary month-nav">下个月</button>
       </div>
       <p class="month-hint">点中间的月份，可以跳到别的月。</p>
-      <div class="month-extra">
+      <div class="month-extra is-empty">
         <button type="button" id="back-today" class="text-btn" hidden>回到本月</button>
       </div>
     </section>
@@ -1245,6 +1250,35 @@ function byOldest(a, b) {
   return (a.createdAt || 0) - (b.createdAt || 0);
 }
 
+function discardUnreadable(raw) {
+  const backupKey = `${STORAGE_KEY}-corrupt`;
+  let backedUp = false;
+  try {
+    localStorage.setItem(backupKey, raw);
+    backedUp = true;
+  } catch (copyErr) {
+    /* 空间不够时，先清掉读不出来的内容再试一次备份 */
+  }
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (removeErr) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, records: [] }));
+    } catch (rewriteErr) {
+      /* 清不掉时，下次打开仍会再提示一次 */
+    }
+  }
+  if (!backedUp) {
+    try {
+      localStorage.setItem(backupKey, raw);
+    } catch (copyErr) {
+      /* 留不住损坏数据时，仍然让页面可以继续用 */
+    }
+  }
+  state.records = [];
+  toast("原来的记录读不出来，已从空白开始。如果有备份，可以点「从备份恢复」。");
+}
+
 function load(saveCleanup) {
   state.storageOk = storageAvailable();
   if (!state.storageOk) {
@@ -1261,22 +1295,16 @@ function load(saveCleanup) {
   try {
     data = JSON.parse(raw);
   } catch (err) {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}-corrupt`, raw);
-    } catch (copyErr) {
-      /* 保留失败也不影响继续使用 */
-    }
-    state.records = [];
-    toast("原来的记录读不出来，已从空白开始。如果有备份，可以点「从备份恢复」。");
+    discardUnreadable(raw);
     return;
   }
   const list = Array.isArray(data) ? data : data && data.records;
   if (!Array.isArray(list)) {
-    state.records = [];
+    discardUnreadable(raw);
     return;
   }
   let migrated = false;
-  const cleaned = [];
+  const byId = new Map();
   list.forEach((item) => {
     const hadId = !!(item && cleanId(item.id));
     const rec = normalizeRecord(item, true);
@@ -1284,9 +1312,10 @@ function load(saveCleanup) {
       migrated = true;
       return;
     }
-    if (!hadId) migrated = true;
-    cleaned.push(rec);
+    if (!hadId || byId.has(rec.id)) migrated = true;
+    byId.set(rec.id, rec);
   });
+  const cleaned = Array.from(byId.values());
   state.records = cleaned;
   if (saveCleanup && migrated) {
     if (cleaned.length === 0 && list.length > 0) {
@@ -1399,7 +1428,10 @@ function setType(type) {
 function renderMonth() {
   monthLabel.textContent = formatMonth(state.month);
   monthInput.value = state.month;
-  backToday.hidden = state.month === currentMonth();
+  const showBack = state.month !== currentMonth();
+  backToday.hidden = !showBack;
+  const extra = backToday.closest(".month-extra");
+  if (extra) extra.classList.toggle("is-empty", !showBack);
 }
 
 function renderSummary() {
@@ -1736,9 +1768,14 @@ function onSubmit(event) {
     return;
   }
 
-  state.lastSaveAt = Date.now();
-
   const wasEditing = !!state.editingId;
+  const willAdd = !wasEditing || !state.records.some((r) => r.id === state.editingId);
+  if (willAdd && state.records.length >= MAX_RECORDS) {
+    showError("账本已经有 5000 条了，先删掉一些再记。这个小账本最多装 5000 条。");
+    return;
+  }
+
+  state.lastSaveAt = Date.now();
   const previous = wasEditing ? state.records.find((r) => r.id === state.editingId) : null;
   const record = {
     id: wasEditing ? state.editingId : newId(),
@@ -1926,26 +1963,45 @@ function parseBackup(text) {
   return { ok: true, records, skipped };
 }
 
+function showLimitMessage(message) {
+  if (dialog.open) {
+    dialogBody.textContent = message;
+    return;
+  }
+  toast(message);
+}
+
 function applyImport(incoming, mode) {
-  if (mode === "replace") state.records = incoming.slice();
-  else {
+  let next;
+  if (mode === "replace") {
+    if (incoming.length > MAX_RECORDS) {
+      showLimitMessage("记录太多了（超过 5000 条）。这个小账本装不下。");
+      return false;
+    }
+    next = incoming.slice();
+  } else {
     const map = new Map(state.records.map((r) => [r.id, r]));
     incoming.forEach((r) => map.set(r.id, r));
-    state.records = Array.from(map.values());
+    if (map.size > MAX_RECORDS) {
+      showLimitMessage("合并后会超过 5000 条，这个小账本装不下。可以先删掉一些，或改用「全部替换」。");
+      return false;
+    }
+    next = Array.from(map.values());
   }
+  state.records = next;
   if (state.editingId && !state.records.some((r) => r.id === state.editingId)) resetToAdd();
   const saved = persist();
   render();
-  if (!saved) return;
+  if (!saved) return false;
   toast(mode === "replace"
     ? `已经换成备份里的账，一共 ${state.records.length} 条。`
     : `已经合并进来，现在一共 ${state.records.length} 条。`);
+  return true;
 }
 
 function confirmReplace(records) {
   if (state.records.length === 0) {
-    applyImport(records, "replace");
-    closeDialog();
+    if (applyImport(records, "replace")) closeDialog();
     return;
   }
   openDialog({
@@ -1957,8 +2013,7 @@ function confirmReplace(records) {
         label: "确定替换",
         className: "btn btn-danger",
         onClick: () => {
-          applyImport(records, "replace");
-          closeDialog();
+          if (applyImport(records, "replace")) closeDialog();
         },
       },
     ],
@@ -1978,8 +2033,7 @@ function openImportChoices(parsed) {
         label: "合并进来",
         className: "btn btn-primary",
         onClick: () => {
-          applyImport(parsed.records, "merge");
-          closeDialog();
+          if (applyImport(parsed.records, "merge")) closeDialog();
         },
       },
       { label: "全部替换", className: "btn btn-danger", onClick: () => confirmReplace(parsed.records) },
