@@ -1,0 +1,12 @@
+{
+  "name": "lvbao-miniapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "绿宝记账微信小程序（第一版）",
+  "scripts": {
+    "sync": "node scripts/sync-lib.js",
+    "test": "node --test",
+    "privacy": "node scripts/export-privacy.js"
+  },
+  "license": "MIT"
+}

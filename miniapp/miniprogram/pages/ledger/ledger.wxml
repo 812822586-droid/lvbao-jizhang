@@ -1,0 +1,81 @@
+<view class="page-pad" wx:if="{{ready}}">
+  <view class="card head">
+    <view class="head-name">{{name}}</view>
+    <view class="row between">
+      <view>
+        <view class="small">一共花了</view>
+        <view class="total">{{total}} <text class="unit">元</text></view>
+      </view>
+      <view class="status {{settled ? 'ok' : ''}}">{{statusText}}</view>
+    </view>
+    <button class="btn btn-primary mt" bindtap="goSettle">看谁该给谁多少钱</button>
+  </view>
+
+  <view class="notice warn" wx:if="{{changedAfterSettle}}">结清之后账目又有改动，请重新对一下账。</view>
+
+  <view class="card">
+    <view class="h2">成员（{{members.length}} 人）</view>
+    <view class="member" wx:for="{{members}}" wx:key="id">
+      <view class="grow">{{item.name}}
+        <text class="tag" wx:if="{{item.isMe}}">我</text>
+        <text class="tag" wx:if="{{item.role === 'owner'}}">创建者</text>
+        <text class="tag gray" wx:if="{{item.virtual}}">虚拟成员</text>
+      </view>
+      <view class="link-btn" wx:if="{{item.canRemove}}" bindtap="removeMember" data-id="{{item.id}}" data-name="{{item.name}}" data-me="{{item.isMe}}">{{item.isMe ? '退出账本' : '移出'}}</view>
+    </view>
+    <view class="row add-row">
+      <input class="input grow" placeholder="添加一位朋友的名字" placeholder-class="input-placeholder" value="{{newMember}}" bindinput="onNewMember" maxlength="20" />
+      <button class="btn btn-ghost btn-small add-btn" bindtap="addMember">添加</button>
+    </view>
+    <view class="small mt">没有手机的朋友、或者还没来得及邀请的人，可以先添加为「虚拟成员」，由大家帮他记。</view>
+  </view>
+
+  <view class="card">
+    <view class="row between">
+      <view class="h2 nomb">账目</view>
+      <button class="btn btn-primary btn-small" bindtap="addExpense">＋ 记一笔</button>
+    </view>
+    <view class="empty" wx:if="{{!items.length}}">还没有账目。谁先付了钱，就记一笔。</view>
+    <view class="exp" wx:for="{{items}}" wx:key="id" bindtap="editExpense" data-id="{{item.id}}">
+      <view class="grow">
+        <view class="exp-title">{{item.title}}</view>
+        <view class="small ellipsis">{{item.date}} · {{item.payerName}} 先付 · {{item.partText}}</view>
+      </view>
+      <view class="exp-amount">{{item.amount}}</view>
+    </view>
+    <view class="link-line" wx:if="{{deleted.length}}" bindtap="toggleDeleted">{{showDeleted ? '收起' : '查看'}}已删除的账目（{{deleted.length}}）</view>
+    <block wx:if="{{showDeleted}}">
+      <view class="exp gone" wx:for="{{deleted}}" wx:key="id">
+        <view class="grow">
+          <view class="exp-title">{{item.title}}</view>
+          <view class="small">{{item.date}} · {{item.amount}} 元</view>
+        </view>
+        <view class="link-btn" wx:if="{{item.canEdit}}" catchtap="restoreExpense" data-id="{{item.id}}">恢复</view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="h2">邀请朋友一起记</view>
+    <block wx:if="{{mode === 'cloud'}}">
+      <view class="muted">点下面的按钮，把邀请卡片发到微信群或发给朋友。卡片里只有账本名字，没有任何金额；朋友点开后要自己确认才会加入。</view>
+      <button class="btn btn-primary mt" open-type="share" wx:if="{{inviteActive}}">邀请朋友（发到微信）</button>
+      <view class="notice mt" wx:else>邀请已停用，没人能通过旧卡片加入。</view>
+      <block wx:if="{{isOwner}}">
+        <button class="btn btn-ghost" bindtap="rotateInvite">换一张新邀请（旧卡片作废）</button>
+        <button class="btn btn-ghost" wx:if="{{inviteActive}}" bindtap="revokeInvite">停用邀请</button>
+      </block>
+    </block>
+    <view class="muted" wx:else>
+      现在是「本机体验模式」，还不能邀请朋友用他们自己的手机加入。开通云开发后，这里会出现邀请按钮。
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{isOwner}}">
+    <view class="h2">危险操作</view>
+    <button class="btn btn-danger" bindtap="deleteLedger">删除整个账本</button>
+    <view class="small mt">删除后所有成员的这本账都会消失，不能恢复。</view>
+  </view>
+</view>
+<view class="empty" wx:if="{{!ready && error}}">{{error}}</view>
+<privacy-popup />

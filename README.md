@@ -112,3 +112,9 @@ Lvbao Ledger is a bookkeeping tool contained in a single web page. Record your d
 ### License
 
 Released under the [MIT License](LICENSE). Free to use, modify, and share.
+
+---
+
+## 微信小程序
+
+微信小程序（第一版）的代码在 [`miniapp/`](miniapp/) 目录，包含原生小程序页面和微信云开发云函数。安装步骤、试玩清单和说明见 [miniapp/README.md](miniapp/README.md)。

@@ -1,0 +1,38 @@
+<view class="page-pad">
+  <view class="empty" wx:if="{{state === 'loading'}}">正在打开邀请……</view>
+
+  <view class="card" wx:if="{{state === 'error'}}">
+    <view class="h2">这个邀请用不了</view>
+    <view class="muted">{{message}}</view>
+    <button class="btn btn-ghost mt" bindtap="goHome">回到首页</button>
+  </view>
+
+  <block wx:if="{{state === 'ready'}}">
+    <view class="card">
+      <view class="small">{{ownerName}} 邀请你加入共同账本</view>
+      <view class="name">{{ledgerName}}</view>
+      <view class="small">现在有 {{memberCount}} 位成员。加入后，你能看到这本账里的所有账目，也能一起记账。</view>
+    </view>
+
+    <view class="card" wx:if="{{already}}">
+      <view class="muted">你已经在这个账本里了。</view>
+      <button class="btn btn-primary mt" bindtap="enter">进入账本</button>
+    </view>
+
+    <view class="card" wx:else>
+      <view class="field" wx:if="{{claimable.length}}">
+        <text class="field-label">账本里已经有你的名字了吗？点一下认领（没有就不选）</text>
+        <view class="chips">
+          <view class="chip {{claimId === item.id ? 'on' : ''}}" wx:for="{{claimable}}" wx:key="id" bindtap="pickClaim" data-id="{{item.id}}">{{item.name}}</view>
+        </view>
+      </view>
+      <view class="field">
+        <text class="field-label">你在账本里叫什么（昵称）</text>
+        <input class="input" type="nickname" placeholder="例如：小李" placeholder-class="input-placeholder" value="{{nickname}}" bindinput="onNickname" bindnicknamereview="onNickname" maxlength="20" />
+      </view>
+      <button class="btn btn-primary" bindtap="join" disabled="{{busy}}">确认加入</button>
+      <view class="small mt">点「确认加入」，表示你同意这本账的成员看到你的昵称和你记的账目。不想加入就直接关掉。</view>
+    </view>
+  </block>
+</view>
+<privacy-popup />

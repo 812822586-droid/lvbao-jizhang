@@ -1,0 +1,73 @@
+<view class="page-pad" wx:if="{{ready}}">
+  <view class="card">
+    <view class="field">
+      <text class="field-label">花在什么上</text>
+      <input class="input" placeholder="例如：住宿" placeholder-class="input-placeholder" value="{{title}}" bindinput="onTitle" maxlength="30" />
+      <view class="chips quick">
+        <view class="chip" wx:for="{{quick}}" wx:key="*this" bindtap="pickQuick" data-t="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">一共多少钱（元）</text>
+      <input class="input big" type="digit" placeholder="0.00" placeholder-class="input-placeholder" value="{{amountText}}" bindinput="onAmount" maxlength="13" />
+      <text class="small err" wx:if="{{amountError}}">{{amountError}}</text>
+    </view>
+
+    <view class="field">
+      <text class="field-label">谁先付的钱</text>
+      <view class="chips">
+        <view class="chip {{payerId === item.id ? 'on' : ''}}" wx:for="{{members}}" wx:key="id" bindtap="pickPayer" data-id="{{item.id}}">{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">谁参与分摊（可多选，不参加的不要点）</text>
+      <view class="chips">
+        <view class="chip {{item.selected ? 'on' : ''}}" wx:for="{{members}}" wx:key="id" bindtap="toggleMember" data-index="{{index}}">{{item.name}}</view>
+      </view>
+      <view class="small mt">
+        <text bindtap="selectAll" class="lnk">全选</text>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">怎么分</text>
+      <view class="chips">
+        <view class="chip {{splitMode === 'equal' ? 'on' : ''}}" bindtap="setMode" data-mode="equal">平均分</view>
+        <view class="chip {{splitMode === 'custom' ? 'on' : ''}}" bindtap="setMode" data-mode="custom">每人指定金额</view>
+      </view>
+    </view>
+
+    <view class="field" wx:if="{{preview.length}}">
+      <text class="field-label">每人出多少</text>
+      <view class="share-row" wx:for="{{preview}}" wx:key="id">
+        <view class="grow">{{item.name}}</view>
+        <input wx:if="{{splitMode === 'custom'}}" class="input share-input" type="digit" placeholder="0.00" placeholder-class="input-placeholder" value="{{item.customText}}" bindinput="onCustom" data-id="{{item.id}}" />
+        <view wx:else class="share-val">{{item.shareText}} 元</view>
+      </view>
+      <view class="small tail" wx:if="{{splitMode === 'equal' && hasRemainder}}">除不尽的零头：多出来的几分钱，按成员加入顺序从前往后每人多 1 分，总额不变。</view>
+      <view class="small {{customOk ? 'okc' : 'err'}}" wx:if="{{splitMode === 'custom'}}">{{customHint}}</view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">日期</text>
+      <picker mode="date" value="{{date}}" bindchange="onDate">
+        <view class="input date-input">{{date}}　点这里换日期</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <text class="field-label">备注（可不填）</text>
+      <input class="input" placeholder="例如：含早餐" placeholder-class="input-placeholder" value="{{note}}" bindinput="onNote" maxlength="100" />
+    </view>
+  </view>
+
+  <button class="btn btn-danger" wx:if="{{eid && canEdit}}" bindtap="remove">删除这笔账</button>
+</view>
+
+<view class="bottom-bar" wx:if="{{ready}}">
+  <button class="btn btn-primary" bindtap="save" disabled="{{saving}}">保存</button>
+</view>
+<view class="empty" wx:if="{{!ready && error}}">{{error}}</view>
+<privacy-popup />

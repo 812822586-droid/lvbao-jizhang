@@ -1,0 +1,57 @@
+<view class="page-pad">
+  <view class="notice warn" wx:if="{{notice}}">{{notice}}</view>
+
+  <view class="month-bar">
+    <view class="month-btn" bindtap="prevMonth">‹</view>
+    <view class="month-title">{{monthLabel}}</view>
+    <view class="month-btn" bindtap="nextMonth">›</view>
+  </view>
+
+  <view class="card">
+    <view class="sum-row">
+      <view class="sum-item">
+        <text class="sum-label">收入</text>
+        <text class="sum-value pos">{{summary.income}}</text>
+      </view>
+      <view class="sum-item">
+        <text class="sum-label">支出</text>
+        <text class="sum-value neg">{{summary.expense}}</text>
+      </view>
+      <view class="sum-item">
+        <text class="sum-label">结余</text>
+        <text class="sum-value {{summary.balanceClass}}">{{summary.balance}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{cats.length}}">
+    <view class="h2">这个月的钱花在哪了</view>
+    <view class="cat-row" wx:for="{{cats}}" wx:key="name">
+      <view class="row between">
+        <text>{{item.name}}</text>
+        <text class="muted">{{item.amount}} 元 · {{item.percent}}%</text>
+      </view>
+      <view class="bar-track">
+        <view class="bar-fill" style="width: {{item.percent}}%; background: {{item.color}};"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="h2">账目明细</view>
+    <view class="empty" wx:if="{{!list.length}}">这个月还没有账目。<view>点下面的绿色按钮，记第一笔吧。</view></view>
+    <view class="rec" wx:for="{{list}}" wx:key="id" bindtap="editRecord" data-id="{{item.id}}">
+      <view class="dot" style="background: {{item.color}};"></view>
+      <view class="grow">
+        <view class="rec-cat">{{item.category}}</view>
+        <view class="small ellipsis">{{item.date}}{{item.note ? ' · ' + item.note : ''}}</view>
+      </view>
+      <view class="rec-amount {{item.cls}}">{{item.sign}}{{item.amount}}</view>
+    </view>
+  </view>
+</view>
+
+<view class="bottom-bar">
+  <button class="btn btn-primary" bindtap="addRecord">＋ 记一笔</button>
+</view>
+<privacy-popup />

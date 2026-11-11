@@ -1,0 +1,4 @@
+.item { display: flex; align-items: center; padding: 28rpx 0; border-bottom: 2rpx solid #d5e6da; }
+.item:last-child { border-bottom: none; }
+.item-name { font-size: 34rpx; font-weight: 700; }
+.arrow { font-size: 48rpx; color: #8fa398; margin-left: 16rpx; }

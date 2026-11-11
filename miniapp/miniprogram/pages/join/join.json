@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "加入账本",
+  "usingComponents": {
+    "privacy-popup": "/components/privacy-popup/privacy-popup"
+  }
+}

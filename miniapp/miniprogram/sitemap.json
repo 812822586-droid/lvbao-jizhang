@@ -1,0 +1,4 @@
+{
+  "desc": "账本内容是私人数据，不让搜索引擎收录",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}

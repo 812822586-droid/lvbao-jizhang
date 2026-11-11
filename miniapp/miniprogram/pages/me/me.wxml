@@ -1,0 +1,33 @@
+<view class="page-pad">
+  <view class="card">
+    <view class="h2">我的昵称</view>
+    <input class="input" type="nickname" placeholder="在共同账本里显示的名字" placeholder-class="input-placeholder" value="{{nickname}}" bindinput="onNickname" bindnicknamereview="onNickname" maxlength="20" />
+    <button class="btn btn-ghost mt" bindtap="saveNickname">保存昵称</button>
+  </view>
+
+  <view class="card">
+    <view class="h2">我的账本数据</view>
+    <button class="btn btn-ghost" bindtap="importWeb">导入网页版备份（.json）</button>
+    <view class="small hint">先在网页版点「导出 JSON」，把文件发到微信（例如「文件传输助手」），再点上面的按钮选择它。重复导入不会重复记账。</view>
+    <button class="btn btn-ghost" bindtap="exportCsv">导出为表格（.csv）</button>
+    <block wx:if="{{mode === 'cloud'}}">
+      <button class="btn btn-ghost" bindtap="backup">备份个人账本到云端</button>
+      <button class="btn btn-ghost" bindtap="restore">从云端恢复（合并，不会删掉本机的账）</button>
+    </block>
+    <view class="small hint" wx:else>现在是「本机体验模式」，数据只在这台手机里，换手机或删除小程序会丢失，建议常用「导出」留一份。</view>
+  </view>
+
+  <view class="card">
+    <view class="h2">隐私与安全</view>
+    <button class="btn btn-ghost" bindtap="openPolicy">查看隐私政策</button>
+    <button class="btn btn-ghost" bindtap="openContract">微信隐私保护指引</button>
+    <button class="btn btn-danger" bindtap="clearAll">清除我的全部数据</button>
+  </view>
+
+  <view class="card">
+    <view class="h2">关于绿宝记账</view>
+    <view class="small">版本 {{version}}　{{mode === 'cloud' ? '云端模式' : '本机体验模式'}}</view>
+    <view class="small mt">本小程序只提供记账和分摊计算：不收钱、不代转账，不提供支付服务。</view>
+  </view>
+</view>
+<privacy-popup />

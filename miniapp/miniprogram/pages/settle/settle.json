@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "对账结算",
+  "usingComponents": {
+    "privacy-popup": "/components/privacy-popup/privacy-popup"
+  }
+}

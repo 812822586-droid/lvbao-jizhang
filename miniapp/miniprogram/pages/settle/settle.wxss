@@ -1,0 +1,14 @@
+.b { font-weight: 700; }
+.tr { padding: 24rpx 0; border-bottom: 2rpx solid #d5e6da; }
+.tr:last-of-type { border-bottom: none; }
+.tr-text { font-size: 34rpx; font-weight: 600; }
+.arrow { color: #0e6b3a; margin: 0 8rpx; }
+.tr-amount { font-size: 38rpx; font-weight: 700; color: #0e6b3a; }
+.btn-row { gap: 16rpx; }
+.who { border-bottom: 2rpx solid #d5e6da; }
+.who:last-child { border-bottom: none; }
+.who-head { padding: 24rpx 0; font-size: 32rpx; }
+.net { font-weight: 700; }
+.caret { margin-left: 16rpx; color: #5b7266; }
+.detail { padding: 0 0 20rpx; }
+.drow { display: flex; justify-content: space-between; font-size: 28rpx; padding: 8rpx 0; color: #3e5348; }

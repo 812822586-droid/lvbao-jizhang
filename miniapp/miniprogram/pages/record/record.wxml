@@ -1,0 +1,43 @@
+<view class="page-pad">
+  <view class="card">
+    <view class="field">
+      <text class="field-label">类型</text>
+      <view class="chips">
+        <view class="chip danger {{type === 'expense' ? 'on' : ''}}" bindtap="setType" data-type="expense">支出</view>
+        <view class="chip {{type === 'income' ? 'on' : ''}}" bindtap="setType" data-type="income">收入</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">金额（元）</text>
+      <input class="input big" type="digit" placeholder="0.00" placeholder-class="input-placeholder" value="{{amountText}}" bindinput="onAmount" maxlength="13" />
+      <text class="small err" wx:if="{{amountError}}">{{amountError}}</text>
+    </view>
+
+    <view class="field">
+      <text class="field-label">分类</text>
+      <view class="chips">
+        <view class="chip {{category === item ? 'on' : ''}}" wx:for="{{categories}}" wx:key="*this" bindtap="setCategory" data-name="{{item}}">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="field-label">日期</text>
+      <picker mode="date" value="{{date}}" bindchange="onDate">
+        <view class="input date-input">{{date}}　点这里换日期</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <text class="field-label">备注（可不填）</text>
+      <input class="input" placeholder="例如：午饭" placeholder-class="input-placeholder" value="{{note}}" bindinput="onNote" maxlength="100" />
+    </view>
+  </view>
+
+  <button class="btn btn-danger" wx:if="{{id}}" bindtap="remove">删除这笔账</button>
+</view>
+
+<view class="bottom-bar">
+  <button class="btn btn-primary" bindtap="save" disabled="{{saving}}">保存</button>
+</view>
+<privacy-popup />
