@@ -1,0 +1,41 @@
+<view class="page-pad">
+  <view class="notice" wx:if="{{mode === 'local'}}">
+    现在是「本机体验模式」：共同账本只存在这台手机上，朋友可以先添加成为「虚拟成员」，由你来帮大家记账、算账。等开通云开发后，朋友才能真正用自己的手机一起记。
+  </view>
+
+  <view class="card" wx:if="{{!showCreate}}">
+    <view class="h2">一群人一起花钱？</view>
+    <view class="muted">聚餐、旅行、合租：谁先付了钱、谁该出多少、最后谁转给谁，这里帮你算清楚。</view>
+    <button class="btn btn-primary mt" bindtap="openCreate">＋ 新建共同账本</button>
+  </view>
+
+  <view class="card" wx:if="{{showCreate}}">
+    <view class="h2">新建共同账本</view>
+    <view class="field">
+      <text class="field-label">账本名字</text>
+      <input class="input" placeholder="例如：周末去海边" placeholder-class="input-placeholder" value="{{name}}" bindinput="onName" maxlength="30" />
+    </view>
+    <view class="field">
+      <text class="field-label">你在账本里叫什么（昵称）</text>
+      <input class="input" type="nickname" placeholder="例如：小张" placeholder-class="input-placeholder" value="{{nickname}}" bindinput="onNickname" bindnicknamereview="onNickname" maxlength="20" />
+    </view>
+    <button class="btn btn-primary" bindtap="create" disabled="{{busy}}">创建</button>
+    <button class="btn btn-ghost" bindtap="closeCreate">取消</button>
+  </view>
+
+  <view class="card" wx:if="{{list.length}}">
+    <view class="h2">我的共同账本</view>
+    <view class="item" wx:for="{{list}}" wx:key="id" bindtap="open" data-id="{{item.id}}">
+      <view class="grow">
+        <view class="item-name">{{item.name}}
+          <text class="tag" wx:if="{{item.isOwner}}">我创建的</text>
+          <text class="tag gray" wx:if="{{item.settled}}">已结清</text>
+        </view>
+        <view class="small">{{item.memberCount}} 人 · 共花 {{item.total}} 元</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+  <view class="empty" wx:if="{{loaded && !list.length && !showCreate}}">还没有共同账本</view>
+</view>
+<privacy-popup />

@@ -1,0 +1,16 @@
+<view class="mask" wx:if="{{show}}" catchtouchmove="noop">
+  <view class="dialog">
+    <view class="title">用户隐私保护提示</view>
+    <view class="body">
+      <text>使用「绿宝记账」前，请先阅读</text>
+      <text class="link" bindtap="openContract">《用户隐私保护指引》</text>
+      <text>和</text>
+      <text class="link" bindtap="openPolicy">《隐私政策》</text>
+      <text>。我们只用你填写的昵称和账目来记账、算账，不收集手机号、位置、通讯录，也不提供支付功能。点「同意」表示你已阅读并同意。</text>
+    </view>
+    <view class="btns">
+      <button class="btn-no" bindtap="onDisagree">不同意</button>
+      <button id="agree-btn" class="btn-yes" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgree">同意</button>
+    </view>
+  </view>
+</view>

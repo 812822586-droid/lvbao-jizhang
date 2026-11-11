@@ -1,0 +1,2 @@
+.err { color: #9a3412; display: block; margin-top: 8rpx; }
+.date-input { line-height: 92rpx; font-size: 32rpx; }

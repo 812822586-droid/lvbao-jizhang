@@ -1,0 +1,10 @@
+.quick { margin-top: 16rpx; }
+.quick .chip { min-height: 60rpx; line-height: 60rpx; font-size: 26rpx; padding: 0 22rpx; }
+.err { color: #9a3412; display: block; margin-top: 8rpx; }
+.okc { color: #0e6b3a; display: block; margin-top: 8rpx; }
+.tail { display: block; margin-top: 12rpx; }
+.date-input { line-height: 92rpx; font-size: 32rpx; }
+.share-row { display: flex; align-items: center; padding: 14rpx 0; border-bottom: 2rpx solid #d5e6da; }
+.share-input { width: 240rpx; height: 76rpx; text-align: right; font-size: 32rpx; }
+.share-val { font-weight: 700; color: #0e6b3a; }
+.lnk { color: #0e6b3a; padding: 8rpx 0; }

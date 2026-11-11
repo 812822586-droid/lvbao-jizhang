@@ -1,0 +1,10 @@
+<view class="page-pad">
+  <view class="card">
+    <block wx:for="{{blocks}}" wx:key="i">
+      <view wx:if="{{item.type === 'h1'}}" class="h1">{{item.text}}</view>
+      <view wx:elif="{{item.type === 'h2'}}" class="h2 sec">{{item.text}}</view>
+      <view wx:else class="p">{{item.text}}</view>
+    </block>
+  </view>
+</view>
+<privacy-popup />

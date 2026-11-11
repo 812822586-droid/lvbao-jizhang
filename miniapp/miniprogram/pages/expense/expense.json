@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记一笔共同花费",
+  "usingComponents": {
+    "privacy-popup": "/components/privacy-popup/privacy-popup"
+  }
+}

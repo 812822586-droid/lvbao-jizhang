@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/ledgers/ledgers",
+    "pages/me/me",
+    "pages/record/record",
+    "pages/ledger/ledger",
+    "pages/expense/expense",
+    "pages/settle/settle",
+    "pages/join/join",
+    "pages/privacy/privacy"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0e6b3a",
+    "navigationBarTitleText": "绿宝记账",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#eef6f0",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#5b7266",
+    "selectedColor": "#0e6b3a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "记账" },
+      { "pagePath": "pages/ledgers/ledgers", "text": "共同账本" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json",
+  "__usePrivacyCheck__": true
+}

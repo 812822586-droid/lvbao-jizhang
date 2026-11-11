@@ -1,0 +1,28 @@
+{
+  "description": "绿宝记账微信小程序。appid 先用游客 touristappid，有了自己的 AppID 再换。",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "libVersion": "latest",
+  "appid": "touristappid",
+  "projectname": "lvbao-miniapp",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "ignoreDevUnusedFiles": false,
+    "ignoreUploadUnusedFiles": false,
+    "compileHotReLoad": true,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "babelSetting": { "ignore": [], "disablePlugins": [], "outputPath": "" }
+  },
+  "condition": {},
+  "packOptions": {
+    "ignore": [{ "value": "cloudfunctions/*/node_modules", "type": "glob" }],
+    "include": []
+  },
+  "editorSetting": { "tabIndent": "insertSpaces", "tabSize": 2 }
+}

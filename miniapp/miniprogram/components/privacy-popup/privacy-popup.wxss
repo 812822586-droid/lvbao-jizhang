@@ -1,0 +1,10 @@
+.mask { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0, 0, 0, 0.55); z-index: 9999; display: flex; align-items: flex-end; justify-content: center; }
+.dialog { width: 100%; background: #fff; border-radius: 32rpx 32rpx 0 0; padding: 48rpx 40rpx calc(40rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.title { font-size: 38rpx; font-weight: 700; color: #0e4a2b; text-align: center; margin-bottom: 24rpx; }
+.body { font-size: 30rpx; line-height: 1.7; color: #173024; }
+.link { color: #0e6b3a; font-weight: 600; text-decoration: underline; }
+.btns { display: flex; gap: 24rpx; margin-top: 40rpx; }
+.btn-no, .btn-yes { flex: 1; height: 96rpx; line-height: 96rpx; border-radius: 48rpx; font-size: 34rpx; font-weight: 600; padding: 0; }
+.btn-no { background: #e5f6ec; color: #0e6b3a; }
+.btn-yes { background: #0e6b3a; color: #fff; }
+.btn-no::after, .btn-yes::after { border: none; }

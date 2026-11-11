@@ -1,0 +1,56 @@
+<view class="page-pad" wx:if="{{ready}}">
+  <view class="notice">
+    绿宝<text class="b">不收钱、不代转账</text>。请你们自己用微信转账；转完后付款的人点「我已转账」，收款的人点「确认收到」，这一笔才算结清。
+  </view>
+  <view class="notice warn" wx:if="{{changedAfterSettle}}">结清之后账目又有改动，下面是按最新账目重新算的结果。</view>
+
+  <view class="card">
+    <view class="h2">谁转给谁</view>
+    <view class="empty" wx:if="{{settled}}">全部结清了，不用再转账 🎉</view>
+    <view class="empty" wx:elif="{{!transfers.length}}">现在没有需要转的钱。</view>
+    <view class="tr" wx:for="{{transfers}}" wx:key="key">
+      <view class="row between">
+        <view class="tr-text">{{item.fromName}} <text class="arrow">→</text> {{item.toName}}</view>
+        <view class="tr-amount">{{item.amount}} 元</view>
+      </view>
+      <view class="small mt" wx:if="{{item.pending}}">{{item.fromName}} 说已经转了，等 {{item.toName}} 确认收到。</view>
+      <view class="row mt wrap btn-row">
+        <button class="btn btn-primary btn-small" wx:if="{{item.canMarkPaid}}" bindtap="markPaid" data-index="{{index}}">我已转账</button>
+        <button class="btn btn-primary btn-small" wx:if="{{item.canConfirm}}" bindtap="confirm" data-id="{{item.pendingId}}">确认收到</button>
+        <button class="btn btn-ghost btn-small" wx:if="{{item.canCancel}}" bindtap="cancel" data-id="{{item.pendingId}}">{{item.cancelText}}</button>
+      </view>
+    </view>
+    <button class="btn btn-ghost mt" wx:if="{{transfers.length}}" bindtap="copyText">复制结算说明（发到群里）</button>
+  </view>
+
+  <view class="card">
+    <view class="h2">为什么这么算</view>
+    <view class="small">每个人的「差额」= 自己先付的钱 − 自己该出的钱（再加上已经确认的转账）。正数表示别人要给他，负数表示他要给别人。点名字可以展开看明细。</view>
+    <view class="who" wx:for="{{people}}" wx:key="id">
+      <view class="row between who-head" bindtap="toggle" data-id="{{item.id}}">
+        <view>{{item.name}}</view>
+        <view class="row"><text class="net {{item.cls}}">{{item.netText}}</text><text class="caret">{{item.open ? '▾' : '▸'}}</text></view>
+      </view>
+      <view class="detail" wx:if="{{item.open}}">
+        <view class="small">先付了 {{item.paidTotal}} 元，该出 {{item.owedTotal}} 元<text wx:if="{{item.settledText}}">，{{item.settledText}}</text></view>
+        <view class="drow" wx:for="{{item.paid}}" wx:for-item="p" wx:key="expenseId"><text>先付：{{p.title}}</text><text>+{{p.amount}}</text></view>
+        <view class="drow" wx:for="{{item.owed}}" wx:for-item="o" wx:key="expenseId"><text>分摊：{{o.title}}</text><text>-{{o.amount}}</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{history.length}}">
+    <view class="h2">转账记录</view>
+    <view class="list-item" wx:for="{{history}}" wx:key="id">
+      <view class="row between">
+        <view>{{item.fromName}} → {{item.toName}}　{{item.amount}} 元</view>
+        <view class="tag {{item.tagClass}}">{{item.statusText}}</view>
+      </view>
+      <view class="row mt wrap btn-row" wx:if="{{item.canUndo}}">
+        <button class="btn btn-ghost btn-small" bindtap="cancel" data-id="{{item.id}}" data-confirmed="1">撤销（点错了）</button>
+      </view>
+    </view>
+  </view>
+</view>
+<view class="empty" wx:if="{{!ready && error}}">{{error}}</view>
+<privacy-popup />
